@@ -492,8 +492,6 @@ main:focus { outline: none; }
   overflow: hidden;
 }
 .card--wide .card__art { aspect-ratio: 16 / 7; }
-.card__art svg { width: 88%; height: auto; transition: transform .35s var(--ease-out); }
-.card:hover .card__art svg { transform: rotate(-4deg) scale(1.05); }
 
 .card__title {
   font-family: var(--font-body);

@@ -561,24 +561,6 @@ main:focus { outline: none; }
   background: radial-gradient(circle at 50% 50%, rgba(208, 4, 10, .5), rgba(42, 5, 5, .55));
 }
 
-.combo__skewers {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px var(--space-2);
-  width: 52%;
-}
-.combo__skewers svg { width: 100%; height: auto; }
-
-.combo__plus {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  line-height: 1;
-  color: var(--yellow-500);
-}
-.combo__bread { width: 16%; max-width: 72px; height: auto; }
-.combo__bottle { width: 11%; max-width: 48px; height: auto; }
-
-.combo__art--plate .plate { width: 78%; max-width: 280px; height: auto; }
 
 .combo__title {
   font-family: var(--font-body);
@@ -592,6 +574,37 @@ main:focus { outline: none; }
 
 .combo__desc { margin-bottom: var(--space-6); }
 .combo__sep { font-weight: 700; color: var(--yellow-500); }
+
+/* Fotos de produto: overlay vermelho + contraste +8% (design system §4) */
+.card__art--photo,
+.combo__art--photo {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+.card__art--photo img,
+.combo__art--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.08);
+  transition: transform .35s var(--ease-out);
+}
+.card__art--photo::after,
+.combo__art--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(147, 2, 2, .15);
+  pointer-events: none;
+}
+.card:hover .card__art--photo img,
+.combo:hover .combo__art--photo img { transform: scale(1.05); }
+
+.combo__art--photo,
+.combo__art--art { aspect-ratio: 4 / 3; min-height: 0; }
+.combo__art--art { padding: var(--space-2); background: var(--ink-900); }
+.combo__art--art img { width: auto; height: 100%; max-width: 100%; object-fit: contain; border-radius: var(--radius-sm); }
 
 /* Faixa amarela "pincel" — uma por tela, só no combo destaque */
 .price-tag {
@@ -621,23 +634,6 @@ main:focus { outline: none; }
 }
 .combo--feature .price-tag strong { font-size: 2.25rem; }
 
-/* Animações do combo (escalonadas por CSS, sem estilo inline) */
-.combo__skewers svg {
-  opacity: 0;
-  transform: translateX(-12px);
-  transition: opacity .35s ease, transform .35s var(--ease-out);
-}
-.combo.is-visible .combo__skewers svg,
-.no-js .combo__skewers svg { opacity: 1; transform: none; }
-.combo__skewers svg:nth-child(2)  { transition-delay: .06s; }
-.combo__skewers svg:nth-child(3)  { transition-delay: .12s; }
-.combo__skewers svg:nth-child(4)  { transition-delay: .18s; }
-.combo__skewers svg:nth-child(5)  { transition-delay: .24s; }
-.combo__skewers svg:nth-child(6)  { transition-delay: .30s; }
-.combo__skewers svg:nth-child(7)  { transition-delay: .36s; }
-.combo__skewers svg:nth-child(8)  { transition-delay: .42s; }
-.combo__skewers svg:nth-child(9)  { transition-delay: .48s; }
-.combo__skewers svg:nth-child(10) { transition-delay: .54s; }
 
 /* 11. Sobre a casa ------------------------------------------------------- */
 .about__inner { display: grid; gap: var(--space-8); align-items: center; }
@@ -905,16 +901,6 @@ main:focus { outline: none; }
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-3px); }
 }
-@keyframes optional-blink {
-  0%, 35%   { opacity: 1; }
-  50%, 85%  { opacity: .25; }
-  100%      { opacity: 1; }
-}
-@keyframes bubble {
-  0%   { transform: translateY(0); opacity: 0; }
-  30%  { opacity: .7; }
-  100% { transform: translateY(-36px); opacity: 0; }
-}
 
 @media (prefers-reduced-motion: no-preference) {
   .smoke { animation: smoke-rise 3.6s ease-in-out infinite; }
@@ -927,8 +913,6 @@ main:focus { outline: none; }
   .grill__glow, .grill__coals { animation: glow 2.2s ease-in-out infinite; }
   .skewer--1 { animation: sizzle 2.8s ease-in-out infinite; }
   .skewer--2 { animation: sizzle 2.8s ease-in-out 1.4s infinite; }
-  .plate__optional { animation: optional-blink 3s ease-in-out infinite; }
-  .combo__bubble { animation: bubble 2s ease-in infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -938,7 +922,25 @@ main:focus { outline: none; }
     animation-iteration-count: 1 !important;
   }
   .js .reveal { opacity: 1; transform: none; }
-  .plate__optional { opacity: .6; }
+}
+
+/* Mobile (< 768px): cardápio em lista — foto à esquerda, texto à direita */
+@media (max-width: 767.98px) {
+  .menu__grid { grid-template-columns: 1fr; gap: var(--space-3); }
+  .card {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: var(--space-4);
+    padding: var(--space-3);
+  }
+  .card__art,
+  .card--wide .card__art {
+    grid-row: 1 / -1;
+    aspect-ratio: 1;
+    margin-bottom: 0;
+  }
+  .card__price { align-self: end; }
 }
 
 /* ==========================================================================
@@ -965,8 +967,8 @@ main:focus { outline: none; }
   }
 
   .menu__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
-  .card--wide { grid-column: span 3; display: grid; grid-template-columns: 1fr 1.2fr; column-gap: var(--space-6); align-items: center; }
-  .card--wide .card__art { grid-row: 1 / span 4; margin-bottom: 0; aspect-ratio: 16 / 9; }
+  .card--wide { grid-column: auto; }
+  .card--wide .card__art { aspect-ratio: 4 / 3; }
   .card__title { font-size: 1.125rem; }
   .card__price { font-size: 1.75rem; }
 
@@ -1010,12 +1012,9 @@ main:focus { outline: none; }
 
   .highlight__inner { grid-template-columns: 1fr 1.2fr; align-items: center; gap: var(--space-12); }
 
-  .card--wide { grid-column: auto; display: flex; }
-  .card--wide .card__art { grid-row: auto; aspect-ratio: 4 / 3; margin-bottom: var(--space-3); }
 
   .promos__grid { grid-template-columns: 1.4fr 1fr; gap: var(--space-8); }
   .combo { padding: var(--space-8); }
-  .combo__art { min-height: 240px; }
 
   .about__inner { grid-template-columns: 1.1fr 1fr; gap: var(--space-16); }
 
